@@ -40,8 +40,48 @@ const deleteCard = (req, res) => {
     });
 };
 
+const likeCard = (req, res) => {
+  Cards.findByIdAndUpdate(
+    req.params.id,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .then((card) => res.status(200).send(card))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
+};
+
+const dislikeCard = (req, res) => {
+  Cards.findByIdAndUpdate(req.params.id, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .then((card) => res.status(200).send(card))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
+};
+
 module.exports = {
   getCards,
   createCard,
-  deleteCard
+  deleteCard,
+  likeCard,
+  dislikeCard
 };

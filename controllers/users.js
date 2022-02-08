@@ -40,8 +40,47 @@ const createUser = (req, res) => {
     });
 };
 
+const updateUser = (req, res) => {
+  const { name, about } = req.body;
+
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      } else if (err.message === 'NotFound') {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
+};
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+      } else if (err.message === 'NotFound') {
+        res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
+      } else {
+        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' });
+      }
+    });
+};
+
 module.exports = {
   getUsers,
   getUser,
-  createUser
+  createUser,
+  updateUser,
+  updateAvatar
 }

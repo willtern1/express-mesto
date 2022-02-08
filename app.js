@@ -12,6 +12,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', () => {
   console.log('Подключение успешно');
 });
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '61fc2477d347ce1afc3dbb14' // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
 app.listen(PORT, () => {
   console.log(`Started on port ${PORT}`);
 });

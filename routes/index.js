@@ -6,6 +6,6 @@ const { NOT_FOUND } = require('../utils/errors');
 router.use('/users', usersRouter);
 router.use('/cards', cardsRouter);
 router.use((req, res) => {
-  res.status(NOT_FOUND).send('Тут ничего нет');
+  res.status(NOT_FOUND).send('Пусто');
 });
 module.exports = router;
