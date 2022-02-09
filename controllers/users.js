@@ -1,12 +1,9 @@
 const User = require('../models/user');
 const { BAD_REQUEST, ERROR_DEFAULT, NOT_FOUND } = require('../utils/errors');
 
-const getUsers = (req, res) => {
-  const { userList } = {};
-  return User.find(userList)
-    .then((users) => res.status(200).send(users))
-    .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
-};
+const getUsers = (req, res) => User.find({})
+  .then((users) => res.status(200).send(users))
+  .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка' }));
 
 const getUser = (req, res) => {
   const { id } = req.params;
@@ -43,7 +40,7 @@ const createUser = (req, res) => {
 const updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
       throw new Error('NotFound');
     })
@@ -61,7 +58,7 @@ const updateUser = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
       throw new Error('NotFound');
     })
@@ -82,5 +79,5 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
-  updateAvatar
-}
+  updateAvatar,
+};
